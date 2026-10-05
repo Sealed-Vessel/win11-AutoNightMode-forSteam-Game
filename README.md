@@ -1,5 +1,7 @@
 # Steam Night Light
 
+在检测到steam游戏开启时关闭夜间模式、游戏关闭时打开夜间模式
+
 Steam 游戏运行时关闭 Windows 夜间模式，全部游戏退出后打开。后台静默运行，无托盘图标、弹窗或联网。
 
 Turn Windows Night Light off while Steam games are running, and on after all games exit. Runs silently without a tray icon, popups, or network access.
@@ -39,3 +41,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Tests.ps1
 ```
 
 Format reference / 格式参考：[win-nightlight-cli](https://github.com/kvnxiao/win-nightlight-cli/blob/main/docs/nightlight-registry-format.md). Windows does not publicly document this format / 此格式不是 Windows 公开接口。
+
+## License / 许可证
+
+[MIT](LICENSE) © 2026 Sealed-Vessel
