@@ -28,29 +28,23 @@ $config = Get-Content (Join-Path $PSScriptRoot 'config.json') -Raw | ConvertFrom
 if ($Check) { Write-Output "NightLight=$([NightLight]::Get()); SteamGameRunning=$(GameRunning)"; return }
 $mutex = New-Object Threading.Mutex($false, 'Local\SteamNightLightMonitor')
 if (-not $mutex.WaitOne(0)) { $mutex.Dispose(); exit }
-$emptySince = $null
 $lastError = ''
 try {
     Log 'Monitor started.'
     while (-not (Test-Path $stop)) {
         try {
             if (GameRunning) {
-                $emptySince = $null
                 if (-not (Test-Path $pending)) { [IO.File]::WriteAllText($pending,'on') }
                 if ([NightLight]::Get()) { [NightLight]::Set($false); Log 'Game active: Night Light off.' }
             } elseif (Test-Path $pending) {
-                if ($null -eq $emptySince) { $emptySince = Get-Date }
-                if (((Get-Date)-$emptySince).TotalSeconds -ge 10) {
-                    [NightLight]::Set($true)
-                    if (-not [NightLight]::Get()) { throw 'Night Light did not accept the on state.' }
-                    Remove-Item $pending
-                    Log 'All games exited: Night Light on.'
-                }
+                [NightLight]::Set($true)
+                if (-not [NightLight]::Get()) { throw 'Night Light did not accept the on state.' }
+                Remove-Item $pending
+                Log 'All games exited: Night Light on.'
             }
             $lastError = ''
             Start-Sleep -Seconds 3
         } catch {
-            $emptySince = $null
             if ($lastError -ne $_.Exception.Message) { Log $_.Exception.Message; $lastError = $_.Exception.Message }
             Start-Sleep -Seconds 15
         }
